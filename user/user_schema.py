@@ -1,6 +1,5 @@
-from pydantic import BaseModel, EmailStr, validator
-
 from fastapi import HTTPException
+from pydantic import BaseModel, EmailStr, field_validator
 
 
 class NewUserForm(BaseModel):
@@ -9,20 +8,20 @@ class NewUserForm(BaseModel):
     phone: str
     password: str
 
-    @validator('email', 'name', 'phone', 'password')
+    @field_validator('email', 'name', 'phone', 'password')
     def check_empty(cls, v):
         if not v or v.isspace():
             raise HTTPException(status_code=422, detail="필수 항목을 입력해주세요.")
         return v
 
-    @validator('phone')
+    @field_validator('phone')
     def check_phone(cls, v):
         phone = v
         if '-' not in v or len(phone) != 13:
             raise HTTPException(status_code=422, detail="올바른 형식의 번호를 입력해주세요.")
         return phone
 
-    @validator('password')
+    @field_validator('password')
     def validate_password(cls, v):
         if len(v) < 8:
             raise HTTPException(status_code=422, detail="비밀번호는 8자리 이상 영문과 숫자를 포함하여 작성해 주세요.")
@@ -35,10 +34,6 @@ class NewUserForm(BaseModel):
 
         return v
 
-    class Token(BaseModel):
-        access_token: str
-        token_type: str
-
 
 """
 1. email, name, phone, pw를 모두 빠짐없이 받아야 한다.
@@ -49,5 +44,3 @@ class NewUserForm(BaseModel):
 
 4. 비밀번호는 8자 이상 영문과 숫자를 포함해야 한다.
 """
-
-
