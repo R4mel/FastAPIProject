@@ -5,10 +5,14 @@ from fastapi import APIRouter, Depends
 
 from board import board_crud, board_schema
 
+# FastAPI에서 사용하는 라우터 객체
 app = APIRouter(
     prefix="/board",
 )
 
+# 새로운 게시글을 생성하는 엔드포인트 정의
+# 데이터베이스 세션을 get_db 함수를 통해 종속성 주입으로 받습니다.
+# 이는 Session 타입입니다.
 @app.post(path="/create", description="기본 게시판 - 게시글 생성")
 async def create_new_post(new_post: board_schema.NewPost, db: Session = Depends(get_db)):
   return board_crud.insert_post(new_post, db)

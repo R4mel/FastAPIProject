@@ -3,7 +3,7 @@ from datetime import datetime
 
 from database import Base
 
-
+# Board 테이블의 스키마를 정의
 class Board(Base):
     __tablename__ = "Board"
 
