@@ -17,9 +17,10 @@ def insert_post(new_post: NewPost, db: Session):
     return post.no
 
 
-def list_all_post(db: Session):
+def list_all_post(db: Session) -> list[PostList]:
     lists = db.query(Board).filter(Board.del_yn == 'Y').all()
-    return [PostList(no=row.no, writer=row.writer, title=row.title, date=row.date) for row in lists]
+    return [PostList(no=getattr(row, 'no'), writer=getattr(row, 'writer'), title=getattr(row, 'title'),
+                     date=getattr(row, 'date')) for row in lists]
 
 
 def get_post(post_no: int, db: Session):
@@ -40,7 +41,7 @@ def update_post(update_post: UpdatePost, db: Session):
         post.content = update_post.content
         db.commit()
         db.refresh(post)
-        return get_post(post.no, db)
+        return get_post(getattr(post, 'no'), db)
 
     except Exception as e:
         return str(e)
